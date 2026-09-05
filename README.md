@@ -6,7 +6,7 @@
 
 Home Assistant custom integration for Mitsubishi Wi-Fi adapters that speak
 the local HTTP **`/smart`** API. Built for a **Lossnay VL-500** on a
-**MAC-578IF-E**.
+**MAC-578IF-E**. Requires Home Assistant **2024.4** or newer.
 
 This is **not** ECHONET Lite and **not** Melview cloud. The adapter may
 advertise ECHONET as on, but this unit never answers UDP 3610.
@@ -36,13 +36,19 @@ Do not add the ducted heat-pump adapter. That is a different device.
 
 | Entity | Notes |
 | --- | --- |
-| Fan | On/off and speed slider |
+| Fan | On/off and 4-notch speed slider. Attributes show setpoint vs reported speed. |
 | Fresh air in | Temperature |
 | Stale air out | Temperature |
+| Problem | On when adapter `STATUS` is not `NORMAL` |
+| Melview connected | Binary diagnostic from the `CONNECT` flag |
+| ECHONET Lite flag | Binary diagnostic; this adapter still never answers UDP 3610 |
 
-Diagnostic sensors (disabled from the dashboard by category): adapter
-status, Melview connect flag, ECHONET flag, reported fan speed, adapter
+Other diagnostic sensors: adapter status, reported fan speed, adapter
 clock, SSL certificate limit, firmware, RSSI.
+
+After setup, **Configure** can change the IP, name, and poll interval
+(15–300s, default 30). Download diagnostics from the device page for a
+redacted `/smart` dump.
 
 ## Compatible hardware
 

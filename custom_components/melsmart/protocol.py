@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
+from typing import Any
 import re
 import xml.etree.ElementTree as ET
 
@@ -20,6 +21,7 @@ PAYLOAD_LEN = 16
 # This adapter accepts 1, 3 and 4; 2 is remapped to 1.
 FAN_SPEEDS = (1, 2, 3, 4)
 FAN_SPEED_FLAG = 0x08
+POWER_FLAG = 0x01
 # Ventilation mode (Lossnay / Bypass / Auto) is Melview-cloud only.
 # App changes leave local CODE unchanged, including group 02 packet[9].
 
@@ -40,7 +42,7 @@ def power_set_packet(on: bool, cls: int = CLASS_VENTILATION) -> bytes:
     """SET (0x41) group 0x01 with the power flag. Proven on VL-500 / MAC-578."""
     payload = bytearray(PAYLOAD_LEN)
     payload[0] = 0x01
-    payload[1] = 0x01
+    payload[1] = POWER_FLAG
     payload[3] = 0x01 if on else 0x00
     return make_packet(0x41, cls, bytes(payload))
 
@@ -54,6 +56,36 @@ def fan_speed_set_packet(speed: int, cls: int = CLASS_VENTILATION) -> bytes:
     payload[1] = FAN_SPEED_FLAG
     payload[6] = speed
     return make_packet(0x41, cls, bytes(payload))
+
+
+def power_and_speed_set_packet(
+    on: bool, speed: int, cls: int = CLASS_VENTILATION
+) -> bytes:
+    """One SET with both power and fan-speed flags, to avoid two POSTs."""
+    if speed not in FAN_SPEEDS:
+        raise ValueError(f"unsupported fan speed {speed}")
+    payload = bytearray(PAYLOAD_LEN)
+    payload[0] = 0x01
+    payload[1] = POWER_FLAG | FAN_SPEED_FLAG
+    payload[3] = 0x01 if on else 0x00
+    payload[6] = speed
+    return make_packet(0x41, cls, bytes(payload))
+
+
+def is_supported_adapter(state: LossnayStatus) -> bool:
+    """Local /smart Lossnay uses class 0x34. HVAC 0x30 must not be added."""
+    return state.device_class == CLASS_VENTILATION
+
+
+def probe_error(status: LossnayStatus | None, *, failed: bool) -> str | None:
+    """Config-flow error key after a /smart probe, or None if the unit is OK."""
+    if failed or status is None:
+        return "cannot_connect"
+    if not status.unique_id:
+        return "no_device_id"
+    if not is_supported_adapter(status):
+        return "not_lossnay"
+    return None
 
 
 def mitsubishi_temp_c(value: int) -> float | None:
@@ -91,7 +123,25 @@ class LossnayStatus:
     def unique_id(self) -> str | None:
         if self.mac:
             return self.mac.replace(":", "").lower()
-        return self.serial
+        return None
+
+    @property
+    def problem(self) -> bool | None:
+        if self.status is None:
+            return None
+        return self.status.upper() != "NORMAL"
+
+    @property
+    def melview_connected(self) -> bool | None:
+        if self.connect is None:
+            return None
+        return self.connect.upper() == "ON"
+
+    @property
+    def echonet_flag_on(self) -> bool | None:
+        if self.echonet is None:
+            return None
+        return self.echonet.upper() == "ON"
 
 
 def parse_lsv(xml_text: str) -> LossnayStatus:
@@ -162,7 +212,8 @@ def _parse_datdate(value: str | None) -> datetime | None:
     if not value:
         return None
     try:
-        return datetime.strptime(value, "%Y/%m/%d %H:%M:%S").replace(tzinfo=timezone.utc)
+        parsed = datetime.strptime(value, "%Y/%m/%d %H:%M:%S")
+        return parsed.replace(tzinfo=timezone.utc)
     except ValueError:
         return None
 
@@ -197,3 +248,33 @@ def csv_command(packet: bytes) -> str:
         " </CODE>\n"
         "</CSV>"
     )
+
+
+def diagnostics_payload(
+    *,
+    host: str,
+    status: LossnayStatus,
+    last_lsv: str | None,
+    pacer_remaining: float,
+) -> dict[str, Any]:
+    """Build a serial-free diagnostics document."""
+    return {
+        "host": host,
+        "mac": status.mac,
+        "device_class": status.device_class,
+        "adapter_status": status.status,
+        "connect": status.connect,
+        "echonet": status.echonet,
+        "app_ver": status.app_ver,
+        "power_on": status.power_on,
+        "fan_speed": status.fan_speed,
+        "reported_fan_speed": status.reported_fan_speed,
+        "fresh_air_in": status.fresh_air_in,
+        "stale_air_out": status.stale_air_out,
+        "codes": {
+            f"{group:02x}": packet.hex()
+            for group, packet in sorted(status.codes.items())
+        },
+        "last_lsv": last_lsv,
+        "pacer_remaining_s": round(pacer_remaining, 3),
+    }

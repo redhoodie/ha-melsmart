@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import date, datetime
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -14,19 +15,18 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import SIGNAL_STRENGTH_DECIBELS_MILLIWATT, UnitOfTemperature
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import CONF_NAME, DEFAULT_NAME, DOMAIN
 from .coordinator import MelSmartCoordinator
+from .device import adapter_device_info
 from .protocol import LossnayStatus
 
 
 @dataclass(frozen=True, kw_only=True)
 class MelSmartSensorDescription(SensorEntityDescription):
-    value_fn: Callable[[LossnayStatus], float | str | None]
+    value_fn: Callable[[LossnayStatus], float | str | int | date | datetime | None]
 
 
 SENSORS: tuple[MelSmartSensorDescription, ...] = (
@@ -45,24 +45,6 @@ SENSORS: tuple[MelSmartSensorDescription, ...] = (
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda s: s.stale_air_out,
-    ),
-    MelSmartSensorDescription(
-        key="indoor_temp",
-        translation_key="indoor_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_registry_enabled_default=False,
-        value_fn=lambda s: s.indoor_temp,
-    ),
-    MelSmartSensorDescription(
-        key="outdoor_temp",
-        translation_key="outdoor_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_registry_enabled_default=False,
-        value_fn=lambda s: s.outdoor_temp,
     ),
     MelSmartSensorDescription(
         key="rssi",
@@ -84,18 +66,6 @@ SENSORS: tuple[MelSmartSensorDescription, ...] = (
         translation_key="adapter_status",
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda s: s.status,
-    ),
-    MelSmartSensorDescription(
-        key="melview_connect",
-        translation_key="melview_connect",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda s: s.connect,
-    ),
-    MelSmartSensorDescription(
-        key="echonet",
-        translation_key="echonet",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda s: s.echonet,
     ),
     MelSmartSensorDescription(
         key="reported_fan_speed",
@@ -125,7 +95,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    coordinator: MelSmartCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: MelSmartCoordinator = entry.runtime_data
     async_add_entities(
         MelSmartSensor(coordinator, entry, description) for description in SENSORS
     )
@@ -142,17 +112,11 @@ class MelSmartSensor(CoordinatorEntity[MelSmartCoordinator], SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
+        self._description = description
         uid = coordinator.data.unique_id or entry.entry_id
         self._attr_unique_id = f"{uid}_{description.key}"
-        name = entry.data.get(CONF_NAME) or DEFAULT_NAME
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, uid)},
-            name=name,
-            manufacturer="Mitsubishi Electric",
-            model="Lossnay (Wi-Fi /smart)",
-            sw_version=coordinator.data.app_ver,
-        )
+        self._attr_device_info = adapter_device_info(coordinator, entry)
 
     @property
-    def native_value(self) -> float | str | None:
-        return self.entity_description.value_fn(self.coordinator.data)
+    def native_value(self) -> float | str | int | date | datetime | None:
+        return self._description.value_fn(self.coordinator.data)

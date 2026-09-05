@@ -2,23 +2,26 @@
 
 from __future__ import annotations
 
-import sys
+from datetime import date, datetime, timezone
 from pathlib import Path
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "custom_components" / "melsmart"))
-
-from datetime import date, datetime, timezone
 
 from protocol import (  # noqa: E402
     checksum,
     csv_command,
     csv_status,
+    diagnostics_payload,
     fan_speed_set_packet,
+    is_supported_adapter,
     make_packet,
     mitsubishi_temp_c,
     parse_lsv,
+    power_and_speed_set_packet,
     power_set_packet,
+    probe_error,
     redact_lsv,
 )
 
@@ -119,7 +122,10 @@ def test_fan_speed_set_packet():
     assert pkt[6] == 0x08
     assert pkt[11] == 0x04
     assert checksum(pkt[:-1]) == pkt[-1]
-    assert fan_speed_set_packet(1).hex() == "fc410134100108000000000100000000000000000070"
+    assert (
+        fan_speed_set_packet(1).hex()
+        == "fc410134100108000000000100000000000000000070"
+    )
 
 
 def test_redact_lsv_strips_serial():
@@ -147,5 +153,71 @@ def test_parse_example_capture():
     assert state.ssl_limit == date(2037, 12, 31)
     assert state.adapter_clock == datetime(2026, 9, 5, 23, 6, 46, tzinfo=timezone.utc)
     assert set(state.codes) == {0x02, 0x03, 0x04, 0x06, 0x09, 0x15}
+    assert state.problem is False
+    assert state.melview_connected is True
+    assert state.echonet_flag_on is True
+
+
+def test_power_and_speed_set_packet():
+    pkt = power_and_speed_set_packet(True, 3)
+    assert pkt[1] == 0x41
+    assert pkt[3] == 0x34
+    assert pkt[6] == 0x09
+    assert pkt[8] == 0x01
+    assert pkt[11] == 0x03
+    assert checksum(pkt[:-1]) == pkt[-1]
+    off = power_and_speed_set_packet(False, 4)
+    assert off[8] == 0x00
+    assert off[11] == 0x04
+
+
+def test_probe_error_and_class_guard():
+    assert probe_error(None, failed=True) == "cannot_connect"
+    assert probe_error(None, failed=False) == "cannot_connect"
+
+    no_mac = parse_lsv("<LSV><STATUS>NORMAL</STATUS></LSV>")
+    assert probe_error(no_mac, failed=False) == "no_device_id"
+
+    hvac = make_packet(0x62, 0x30, bytes.fromhex("02000001000001000000000000000000"))
+    hvac_xml = (
+        "<LSV><MAC>aa:bb:cc:dd:ee:ff</MAC>"
+        f"<CODE><VALUE>{hvac.hex()}</VALUE></CODE></LSV>"
+    )
+    hvac_status = parse_lsv(hvac_xml)
+    assert hvac_status.device_class == 0x30
+    assert not is_supported_adapter(hvac_status)
+    assert probe_error(hvac_status, failed=False) == "not_lossnay"
+
+    ok = parse_lsv(CAPTURED_LSV)
+    assert is_supported_adapter(ok)
+    assert probe_error(ok, failed=False) is None
+
+
+def test_problem_flag_when_status_not_normal():
+    xml = CAPTURED_LSV.replace("<STATUS>NORMAL</STATUS>", "<STATUS>ERROR</STATUS>")
+    state = parse_lsv(xml)
+    assert state.problem is True
+
+
+def test_diagnostics_payload_omits_serial():
+    import json
+
+    state = parse_lsv(CAPTURED_LSV)
+    last = redact_lsv("<LSV><SERIAL>SECRET99</SERIAL></LSV>")
+    payload = diagnostics_payload(
+        host="10.0.0.30",
+        status=state,
+        last_lsv=last,
+        pacer_remaining=1.25,
+    )
+    dumped = json.dumps(payload)
+    assert "SECRET99" not in dumped
+    assert "serial" not in payload
+    assert payload["host"] == "10.0.0.30"
+    assert payload["mac"] == "8c:53:e6:19:d1:76"
+    assert payload["device_class"] == 0x34
+    assert "02" in payload["codes"]
+    assert payload["pacer_remaining_s"] == 1.25
+    assert "<SERIAL>REDACTED</SERIAL>" in payload["last_lsv"]
 
 

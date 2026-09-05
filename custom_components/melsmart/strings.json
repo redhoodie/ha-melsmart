@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Mitsubishi Wi-Fi (/smart)",
-        "description": "Add a Lossnay (or other Mitsubishi) adapter by LAN IP. This uses the local HTTP /smart API, not ECHONET Lite.",
+        "description": "Add a Lossnay adapter by LAN IP. This uses the local HTTP /smart API, not ECHONET Lite. Ducted HVAC adapters are rejected.",
         "data": {
           "host": "IP address",
           "name": "Name"
@@ -11,23 +11,45 @@
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect."
+      "cannot_connect": "Failed to connect.",
+      "no_device_id": "The adapter did not report a MAC address."
     },
     "abort": {
-      "already_configured": "This adapter is already configured."
+      "already_configured": "This adapter is already configured.",
+      "not_lossnay": "This adapter is not a Lossnay unit (class 0x34). Ducted HVAC adapters are not supported."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Mitsubishi Wi-Fi (/smart)",
+        "description": "Change the adapter IP, name, or how often Home Assistant polls /smart.",
+        "data": {
+          "host": "IP address",
+          "name": "Name",
+          "scan_interval": "Scan interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect.",
+      "no_device_id": "The adapter did not report a MAC address.",
+      "not_lossnay": "This adapter is not a Lossnay unit (class 0x34). Ducted HVAC adapters are not supported.",
+      "wrong_device": "That IP is a different adapter than this entry."
     }
   },
   "entity": {
+    "binary_sensor": {
+      "problem": { "name": "Problem" },
+      "melview_connect": { "name": "Melview connected" },
+      "echonet": { "name": "ECHONET Lite flag" }
+    },
     "sensor": {
       "fresh_air_in": { "name": "Fresh air in" },
       "stale_air_out": { "name": "Stale air out" },
-      "indoor_temp": { "name": "Indoor temperature" },
-      "outdoor_temp": { "name": "Outdoor temperature" },
       "rssi": { "name": "Wi-Fi signal" },
       "firmware": { "name": "Firmware" },
       "adapter_status": { "name": "Adapter status" },
-      "melview_connect": { "name": "Melview connect" },
-      "echonet": { "name": "ECHONET Lite flag" },
       "reported_fan_speed": { "name": "Reported fan speed" },
       "adapter_clock": { "name": "Adapter clock" },
       "ssl_limit": { "name": "SSL certificate limit" }

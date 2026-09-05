@@ -23,6 +23,7 @@ Same-POST replies echo cached `CODE`. A change appears on a later poll
 | --- | --- | --- |
 | Power | `0x01` | byte 3 = `0` / `1` |
 | Fan speed | `0x08` | byte 6 = `1` / `3` / `4` |
+| Power + speed | `0x09` (`0x01\|0x08`) | byte 3 = power, byte 6 = speed |
 
 Speed **2** is accepted by the app UI and rejected by this firmware
 (stored as 1). Speeds 5 and 6 are rejected.
