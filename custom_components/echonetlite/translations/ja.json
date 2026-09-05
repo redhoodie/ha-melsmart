@@ -1,0 +1,205 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "デバイスは構成済みです"
+        },
+        "error": {
+            "cannot_connect": "接続できません。",
+            "invalid_auth": "認証が無効です。",
+            "unknown": "予期しないエラーです。",
+            "not_found": "機器を検出できませんでした。",
+            "already_configured": "その IP のデバイスは既に構成されています。",
+            "cannot_get_property_maps": "操作に必要なプロパティマップの取得ができませんでした。"
+        },
+        "step": {
+            "user": {
+                "title": "機器IPアドレスと名称の設定 (自動検出)",
+                "description": "自動検出のため、送信ボタンを押してから30秒以内に電源のON/OFFなどの操作を行ってください。IPアドレスが分かっている場合は、IPアドレスと名称を入力し直してください。",
+                "data": {
+                    "host": "ホスト (IP アドレス)",
+                    "title": "機器名称"
+                }
+            },
+            "user_man": {
+                "title": "機器IPアドレスと名称の設定",
+                "description": "",
+                "data": {
+                    "host": "ホスト (IP アドレス)",
+                    "title": "機器名称"
+                }
+            }
+        },
+        "progress": {
+            "discover": "ECHONETLite 機器を探しています.."
+        }
+    },
+    "options": {
+        "error": {
+            "invalid_path": "指定されたパスが無効です。`ユーザー名/リポジトリ名` の形式の有効な GitHub リポジトリである必要があります。"
+        },
+        "step": {
+            "init": {
+                "title": "ECHONET Lite オプション",
+                "data": {
+                    "other_mode": "運転モード「その他」の取り扱い",
+                    "fan_settings": "風量設定の構成",
+                    "swing_horiz": "風向左右設定の構成",
+                    "swing_vert": "風向上下設定の構成",
+                    "auto_direction": "自動風向の構成",
+                    "swing_mode": "スイングモードの構成",
+                    "ha_ui_swing": "エアコンエンティティUIでのスイングモードの構成",
+                    "min_temp_heat": "暖房時の最低温度設定",
+                    "max_temp_heat": "暖房時の最高温度設定",
+                    "min_temp_cool": "冷房時の最低温度設定",
+                    "max_temp_cool": "冷房時の最高温度設定",
+                    "min_temp_auto": "自動モード時の最低温度設定",
+                    "max_temp_auto": "自動モード時の最高温度設定",
+                    "force_polling": "即時通知が見込める場合でもポーリングを止めない",
+                    "super_energy": "エネルギー関連のセンサーを有効にする(取得可能な場合)",
+                    "batch_size_max": "バッチリクエストの最大プロパティ数"
+                },
+                "description": "オプション設定を構成する"
+            }
+        }
+    },
+    "entity": {
+        "sensor": {
+            "echonetlite": {
+                "state": {
+                    "Stopped": "停止",
+                    "Supplying Hot Water": "湯はり中",
+                    "Keeping Bath Temperature": "保温中",
+                    "heating": "加温中",
+                    "not heating": "停止"
+                }
+            }
+        },
+        "select": {
+            "echonetlite": {
+                "state": {
+                    "auto": "自動",
+                    "minimum": "微風",
+                    "low": "弱",
+                    "medium-low": "中弱",
+                    "medium": "中",
+                    "medium-high": "中強",
+                    "high": "強",
+                    "very-high": "強々",
+                    "max": "最大",
+                    "rc-right": "> >>",
+                    "left-lc": "<< <",
+                    "lc-center-rc": "< || >",
+                    "left-lc-rc-right": "<< < > >>",
+                    "right": ">>",
+                    "rc": ">",
+                    "center": "||",
+                    "center-right": "|| >>",
+                    "center-rc": "|| >",
+                    "center-rc-right": "|| > >>",
+                    "lc": "<",
+                    "lc-right": "< >>",
+                    "lc-rc": "< >",
+                    "lc-rc-right": "< > >>",
+                    "lc-center": "< ||",
+                    "lc-center-right": "< || >>",
+                    "lc-center-rc-right": "< || > >>",
+                    "left": "<<",
+                    "left-right": "<< >>",
+                    "left-rc": "<< >",
+                    "left-rc-right": "<< > >>",
+                    "left-center": "<< ||",
+                    "left-center-right": "<< || >>",
+                    "left-center-rc": "<< || >",
+                    "left-center-rc-right": "<< || > >>",
+                    "left-lc-right": "<< < >>",
+                    "left-lc-rc": "<< < >",
+                    "left-lc-center": "<< < ||",
+                    "left-lc-center-right": "<< < || >>",
+                    "left-lc-center-rc": "<< < || >",
+                    "left-lc-center-rc-right": "<< < || > >>",
+                    "upper": "上",
+                    "upper-central": "中上",
+                    "central": "中",
+                    "lower-central": "中下",
+                    "lower": "下",
+                    "not-used": "スイングなし",
+                    "vert": "上下スイング",
+                    "horiz": "左右スイング",
+                    "vert-horiz": "上下左右スイング",
+                    "non-auto": "固定",
+                    "auto-vert": "上下自動",
+                    "auto-horiz": "左右自動"
+                }
+            }
+        },
+        "climate": {
+            "echonetlite": {
+                "state_attributes": {
+                    "fan_mode": {
+                        "state": {
+                            "auto": "自動",
+                            "minimum": "微風",
+                            "low": "弱",
+                            "medium-low": "中弱",
+                            "medium": "中",
+                            "medium-high": "中強",
+                            "high": "強",
+                            "very-high": "強々",
+                            "max": "最大"
+                        }
+                    },
+                    "swing_mode": {
+                        "name": "風向設定",
+                        "state": {
+                            "rc-right": "> >>",
+                            "left-lc": "<< <",
+                            "lc-center-rc": "< || >",
+                            "left-lc-rc-right": "<< < > >>",
+                            "right": ">>",
+                            "rc": ">",
+                            "center": "||",
+                            "center-right": "|| >>",
+                            "center-rc": "|| >",
+                            "center-rc-right": "|| > >>",
+                            "lc": "<",
+                            "lc-right": "< >>",
+                            "lc-rc": "< >",
+                            "lc-rc-right": "< > >>",
+                            "lc-center": "< ||",
+                            "lc-center-right": "< || >>",
+                            "lc-center-rc-right": "< || > >>",
+                            "left": "<<",
+                            "left-right": "<< >>",
+                            "left-rc": "<< >",
+                            "left-rc-right": "<< > >>",
+                            "left-center": "<< ||",
+                            "left-center-right": "<< || >>",
+                            "left-center-rc": "<< || >",
+                            "left-center-rc-right": "<< || > >>",
+                            "left-lc-right": "<< < >>",
+                            "left-lc-rc": "<< < >",
+                            "left-lc-center": "<< < ||",
+                            "left-lc-center-right": "<< < || >>",
+                            "left-lc-center-rc": "<< < || >",
+                            "left-lc-center-rc-right": "<< < || > >>",
+                            "upper": "上",
+                            "upper-central": "中上",
+                            "central": "中",
+                            "lower-central": "中下",
+                            "lower": "下",
+                            "not-used": "スイングなし",
+                            "vert": "上下スイング",
+                            "horiz": "左右スイング",
+                            "vert-horiz": "上下左右スイング",
+                            "auto": "自動",
+                            "non-auto": "手動",
+                            "auto-vert": "上下自動",
+                            "auto-horiz": "左右自動"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "title": "ECHONETLite"
+}

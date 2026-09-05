@@ -1,0 +1,187 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Device IP address and name setting (Auto Discovery)",
+                "description": "For automatic detection, after pressing the Submit button, please perform operations such as turning the device on or off within 30 seconds. If you know the IP address, enter the IP address and name.",
+                "data": {
+                    "host": "[%key:common::config_flow::data::host%]",
+                    "title": "[%key:common::config_flow::data::title%]"
+                }
+            },
+            "user_man": {
+                "title": "Device IP address and name setting",
+                "description": "",
+                "data": {
+                    "host": "[%key:common::config_flow::data::host%]",
+                    "title": "[%key:common::config_flow::data::title%]"
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+            "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+            "unknown": "[%key:common::config_flow::error::unknown%]",
+            "not_found": "Device could not be detected.",
+            "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+        },
+        "abort": {
+            "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+        },
+        "progress": {
+            "discover": "Discovering ECHONETLite devices.."
+        }
+    },
+    "options": {
+        "error": {
+            "invalid_path": "Invalid Setting"
+        },
+        "step": {
+            "init": {
+                "title": "ECHONET Lite HVAC Options",
+                "data": {
+                    "fan_settings": "Configure fan settings",
+                    "swing_horiz": "Configure Horizontal Swing Settings",
+                    "swing_vert": "Configure Vertical Swing Settings",
+                    "auto_direction": "Configure Auto Direction",
+                    "swing_mode": "Configure Swing Mode",
+                    "min_temp_heat": "Configure Minimum Temperature for Heating Operation",
+                    "max_temp_heat": "Configure Maximum Temperature for Heating Operation",
+                    "min_temp_cool": "Configure Minimum Temperature for Cooling Operation",
+                    "max_temp_cool": "Configure Maximum Temperature for Cooling Operation",
+                    "min_temp_auto": "Configure Minimum Temperature for Automatic Operation",
+                    "max_temp_auto": "Configure Maximum Temperature for Automatic Operation"
+                },
+                "description": "Configure Fan Settings"
+            }
+        }
+    },
+    "entity": {
+        "select": {
+            "echonetlite": {
+                "state": {
+                    "auto": "Auto",
+                    "minimum": "Minimum",
+                    "low": "Low",
+                    "medium-low": "Medium-Low",
+                    "medium": "Medium",
+                    "medium-high": "Medium-High",
+                    "high": "High",
+                    "very-high": "Very-High",
+                    "max": "Max",
+                    "rc-right": "Right Center + Right",
+                    "left-lc": "Left + Left Center",
+                    "lc-center-rc": "Left + Center + Right Center",
+                    "left-lc-rc-right": "Left + Left Center + Right Center + Right",
+                    "right": "Right",
+                    "rc": "Right Center",
+                    "center": "Center",
+                    "center-right": "Center + Right",
+                    "center-rc": "Center + Right Center",
+                    "center-rc-right": "Center + Right Center + Right",
+                    "lc": "Left Center",
+                    "lc-right": "Left Center + Right",
+                    "lc-rc": "Left Center + Right Center",
+                    "lc-rc-right": "Left Center + Right Center + Right",
+                    "lc-center": "Left Center + Center",
+                    "lc-center-right": "Left Center + Center + Right",
+                    "lc-center-rc-right": "Left Center + Center + Right Center + Right",
+                    "left": "Left",
+                    "left-right": "Left + Right",
+                    "left-rc": "Left + Right Center",
+                    "left-rc-right": "Left + Right Center + Right",
+                    "left-center": "Left + Center",
+                    "left-center-right": "Left + Center + Right",
+                    "left-center-rc": "Left + Center + Right Center",
+                    "left-center-rc-right": "Left + Center + Right Center + Right",
+                    "left-lc-right": "Left + Left Center + Right",
+                    "left-lc-rc": "Left + Left Center + Right Center",
+                    "left-lc-center": "Left + Left Center + Center",
+                    "left-lc-center-right": "Left + Left Center + Center + Right",
+                    "left-lc-center-rc": "Left + Left Center + Center + Right Center",
+                    "left-lc-center-rc-right": "Left + Left Center + Center + Right Center + Right",
+                    "upper": "Upper",
+                    "upper-central": "Upper Central",
+                    "central": "Central",
+                    "lower-central": "Lower Central",
+                    "lower": "Lower",
+                    "not-used": "Not Used (Off)",
+                    "vert": "Vertical",
+                    "horiz": "Horizontal",
+                    "vert-horiz": "Vertical-Horizontal",
+                    "non-auto": "Non-Auto",
+                    "auto-vert": "Auto Vertical",
+                    "auto-horiz": "Auto Horizontal"
+                }
+            }
+        },
+        "climate": {
+            "echonetlite": {
+                "state_attributes": {
+                    "fan_mode": {
+                        "state": {
+                            "auto": "Auto",
+                            "minimum": "Minimum",
+                            "low": "Low",
+                            "medium-low": "Medium-Low",
+                            "medium": "Medium",
+                            "medium-high": "Medium-High",
+                            "high": "High",
+                            "very-high": "Very-High",
+                            "max": "Max"
+                        }
+                    },
+                    "swing_mode": {
+                        "name": "Air direction",
+                        "state": {
+                            "rc-right": "Right Center + Right",
+                            "left-lc": "Left + Left Center",
+                            "lc-center-rc": "Left + Center + Right Center",
+                            "left-lc-rc-right": "Left + Left Center + Right Center + Right",
+                            "right": "Right",
+                            "rc": "Right Center",
+                            "center": "Center",
+                            "center-right": "Center + Right",
+                            "center-rc": "Center + Right Center",
+                            "center-rc-right": "Center + Right Center + Right",
+                            "lc": "Left Center",
+                            "lc-right": "Left Center + Right",
+                            "lc-rc": "Left Center + Right Center",
+                            "lc-rc-right": "Left Center + Right Center + Right",
+                            "lc-center": "Left Center + Center",
+                            "lc-center-right": "Left Center + Center + Right",
+                            "lc-center-rc-right": "Left Center + Center + Right Center + Right",
+                            "left": "Left",
+                            "left-right": "Left + Right",
+                            "left-rc": "Left + Right Center",
+                            "left-rc-right": "Left + Right Center + Right",
+                            "left-center": "Left + Center",
+                            "left-center-right": "Left + Center + Right",
+                            "left-center-rc": "Left + Center + Right Center",
+                            "left-center-rc-right": "Left + Center + Right Center + Right",
+                            "left-lc-right": "Left + Left Center + Right",
+                            "left-lc-rc": "Left + Left Center + Right Center",
+                            "left-lc-center": "Left + Left Center + Center",
+                            "left-lc-center-right": "Left + Left Center + Center + Right",
+                            "left-lc-center-rc": "Left + Left Center + Center + Right Center",
+                            "left-lc-center-rc-right": "Left + Left Center + Center + Right Center + Right",
+                            "upper": "Upper",
+                            "upper-central": "Upper Central",
+                            "central": "Central",
+                            "lower-central": "Lower Central",
+                            "lower": "Lower",
+                            "not-used": "Not Used (Off)",
+                            "vert": "Vertical",
+                            "horiz": "Horizontal",
+                            "vert-horiz": "Vertical-Horizontal",
+                            "auto": "Auto",
+                            "non-auto": "Non-Auto",
+                            "auto-vert": "Auto Vertical",
+                            "auto-horiz": "Auto Horizontal"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
