@@ -9,6 +9,11 @@ units such as the **VL-500** on a **MAC-578IF** Wi-Fi interface.
 See [LOSSNAY.md](LOSSNAY.md) for the protocol research, app mapping, and
 what to check on your LAN if the adapter does not expose a ventilation object.
 
+If the Lossnay adapter never answers ECHONET UDP 3610, this repo also includes
+**Mitsubishi Wi-Fi (/smart)** (`custom_components/melsmart`) — local HTTP
+control of class `0x0134` (power, fan speed 1/3/4, and the two temperatures
+the adapter actually reports).
+
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
 [![hacs][hacsbadge]][hacs]

@@ -1,0 +1,36 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mitsubishi Wi-Fi (/smart)",
+        "description": "Add a Lossnay (or other Mitsubishi) adapter by LAN IP. This uses the local HTTP /smart API, not ECHONET Lite.",
+        "data": {
+          "host": "IP address",
+          "name": "Name"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect."
+    },
+    "abort": {
+      "already_configured": "This adapter is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "fresh_air_in": { "name": "Fresh air in" },
+      "stale_air_out": { "name": "Stale air out" },
+      "indoor_temp": { "name": "Indoor temperature" },
+      "outdoor_temp": { "name": "Outdoor temperature" },
+      "rssi": { "name": "Wi-Fi signal" },
+      "firmware": { "name": "Firmware" },
+      "adapter_status": { "name": "Adapter status" },
+      "melview_connect": { "name": "Melview connect" },
+      "echonet": { "name": "ECHONET Lite flag" },
+      "reported_fan_speed": { "name": "Reported fan speed" },
+      "adapter_clock": { "name": "Adapter clock" },
+      "ssl_limit": { "name": "SSL certificate limit" }
+    }
+  }
+}

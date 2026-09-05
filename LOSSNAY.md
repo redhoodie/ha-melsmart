@@ -122,7 +122,7 @@ ECHONET appliance. The fan entity exposes `turn_on` / `turn_off`.
    `mac578` in the app). Both the heat pump and the Lossnay need adapters
    for Wi-Fi Interlock; this integration uses the Lossnay one.
 2. Edit unit settings on the **Lossnay** → enable **ECHONET Lite**.
-3. Reserve a DHCP address for that MAC (`8c:53:e6:…` in the sample app).
+3. Reserve a DHCP address for the Lossnay adapter MAC.
 4. Home Assistant → Add Integration → **ECHONET Lite** → Lossnay IP.
 5. Expect `eojgc=1`, `eojcc=52` (`0x34`) or `eojcc=51` (`0x33`) in debug
    logs. A fan entity named after the config title should appear.
@@ -142,11 +142,22 @@ It is possible a Lossnay-typed adapter:
 None of those can be faked from Home Assistant. Capture the discovery
 `getmap` / `setmap` from the log and we can add a manufacturer quirk.
 
-**Cloud fallback (not this repo):** the AU/NZ app speaks Melview, not
-MELCloud. Experimental Lossnay support exists in
-[rowds15/rowdys15-ha-melview](https://github.com/rowds15/rowdys15-ha-melview).
+**Local `/smart` fallback (this repo):** if the adapter never answers UDP
+3610, use **Mitsubishi Wi-Fi (/smart)** (`custom_components/melsmart`).
+That is the same encrypted HTTP API as
+[pymitsubishi](https://github.com/pymitsubishi/pymitsubishi), which only
+models HVAC class `0x0130`. This component talks class `0x0134` and
+exposes a fan (on/off and speeds 1–4) and the two temperatures the
+adapter reports over `/smart` (Fresh air in, Stale air out). Ventilation
+mode (Lossnay / Bypass / Auto), Pre-warmed, Exhaust, and Boost are not
+in the local status frames on this firmware. A redacted live `<LSV>`
+from a VL-500 / MAC-578IF-E (fw 43.00) is in
+[examples/lossnay-mac578-fw43](examples/lossnay-mac578-fw43).
+
+**Cloud fallback:** the AU/NZ app speaks Melview, not MELCloud.
+Experimental Lossnay support exists in
+[bodhi/ha-melview](https://github.com/bodhi/ha-melview).
 Europe MELCloud ERV devices use [ojkaas/MELCloud](https://github.com/ojkaas/MELCloud).
-Those are cloud APIs. This fork stays local ECHONET.
 
 ## Related work
 

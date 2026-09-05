@@ -1,0 +1,11 @@
+{
+  "domain": "melsmart",
+  "name": "Mitsubishi Wi-Fi (/smart)",
+  "codeowners": ["@redhoodie"],
+  "config_flow": true,
+  "documentation": "https://github.com/redhoodie/echonet-lossnay-support",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/redhoodie/echonet-lossnay-support/issues",
+  "requirements": [],
+  "version": "0.4.7"
+}
