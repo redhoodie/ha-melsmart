@@ -3,9 +3,9 @@
   "name": "Mitsubishi Wi-Fi (/smart)",
   "codeowners": ["@redhoodie"],
   "config_flow": true,
-  "documentation": "https://github.com/redhoodie/echonet-lossnay-support",
+  "documentation": "https://github.com/redhoodie/ha-melsmart",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/redhoodie/echonet-lossnay-support/issues",
+  "issue_tracker": "https://github.com/redhoodie/ha-melsmart/issues",
   "requirements": [],
-  "version": "0.4.7"
+  "version": "0.5.0"
 }
